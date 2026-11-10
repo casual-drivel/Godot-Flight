@@ -87,14 +87,14 @@ func _ready() -> void:
 	add_child(hud)
 
 func _feed_inputs() -> void:
-	ac.pitchValue = (1.0 if Input.is_key_pressed(KEY_UP) else 0.0) \
+	ac.pitch_value = (1.0 if Input.is_key_pressed(KEY_UP) else 0.0) \
 		- (1.0 if Input.is_key_pressed(KEY_DOWN) else 0.0)
-	ac.rollValue = (1.0 if Input.is_key_pressed(KEY_LEFT) else 0.0) \
+	ac.roll_value = (1.0 if Input.is_key_pressed(KEY_LEFT) else 0.0) \
 		- (1.0 if Input.is_key_pressed(KEY_RIGHT) else 0.0)
-	ac.accelValue = 1.0 if Input.is_key_pressed(KEY_3) else 0.0
-	ac.brakeValue = 1.0 if Input.is_key_pressed(KEY_1) else 0.0
-	ac.yawLValue = 1.0 if Input.is_key_pressed(KEY_Q) else 0.0
-	ac.yawRValue = 1.0 if Input.is_key_pressed(KEY_E) else 0.0
+	ac.accel_value = 1.0 if Input.is_key_pressed(KEY_3) else 0.0
+	ac.brake_value = 1.0 if Input.is_key_pressed(KEY_1) else 0.0
+	ac.yaw_l_value = 1.0 if Input.is_key_pressed(KEY_Q) else 0.0
+	ac.yaw_r_value = 1.0 if Input.is_key_pressed(KEY_E) else 0.0
 
 func _physics_process(delta: float) -> void:
 	_acc += delta
@@ -106,7 +106,7 @@ func _physics_process(delta: float) -> void:
 	# display sees smooth motion instead of 1-1-2-step judder
 	var alpha: float = clampf(_acc / ac.FIXED_DT, 0.0, 1.0)
 	_jet_pos = ac.prev_position_units.lerp(ac.position_units, alpha)
-	var q_render: Quaternion = ac.prev_q.slerp(ac.q, alpha)
+	var q_render: Quaternion = ac.prev_attitude.slerp(ac.attitude, alpha)
 	jet.global_basis = Basis(q_render)
 	jet.global_position = _jet_pos
 
@@ -117,11 +117,11 @@ func _physics_process(delta: float) -> void:
 	cam.global_basis = cam.global_basis.slerp(b, 1.0 - exp(-8.0 * delta))
 
 	var flags := ""
-	if ac.isStalling:
+	if ac.is_stalling:
 		flags += "  STALL"
-	if ac.isHighGTurning:
+	if ac.is_high_g_turning:
 		flags += "  HIGH-G"
-	if ac.isAutoPilot:
+	if ac.is_autopilot:
 		flags += "  AP"
 	hud.text = "SPD %4d   ALT %5d   HDG %03d\nTHR %+3.0f%%   [OperationZERO-Godot]%s" % [
 		ac.display_speed(), ac.display_altitude(), int(ac.display_heading()),

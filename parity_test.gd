@@ -23,13 +23,13 @@ func _initialize() -> void:
 	print("ROUNDTRIP: max_err=%.4f deg (expect <0.01)" % max_err)
 
 	# sanity: x=90 must point forward straight down (their stall target)
-	AC.reset(); AC.q = AC.u_euler(90.0, 0.0, 0.0)
+	AC.reset(); AC.attitude = AC.u_euler(90.0, 0.0, 0.0)
 	print("PITCH90_FORWARD: %s (expect ~ (0,-1,0))" % AC.forward())
-	AC.reset(); AC.q = AC.u_euler(0.0, 90.0, 0.0)
+	AC.reset(); AC.attitude = AC.u_euler(0.0, 90.0, 0.0)
 	print("YAW90_FORWARD: %s (expect ~ (1,0,0) = right)" % AC.forward())
 
 	# 2) AB ramp from default speed (accel held 30 s)
-	AC.reset(); AC.accelValue = 1.0
+	AC.reset(); AC.accel_value = 1.0
 	var marks := {}
 	for t in range(int(30.0 / AC.FIXED_DT)):
 		AC.step()
@@ -42,23 +42,23 @@ func _initialize() -> void:
 
 	# 3) Full braking from top speed (10 s)
 	for t in range(int(10.0 / AC.FIXED_DT)):
-		AC.accelValue = 0.0; AC.brakeValue = 1.0
+		AC.accel_value = 0.0; AC.brake_value = 1.0
 		AC.step()
-	print("BRAKE10: speed=%.1f m/s (ease toward min %.0f)" % [AC.speed, AC.minSpeed])
+	print("BRAKE10: speed=%.1f m/s (ease toward min %.0f)" % [AC.speed, AC.min_speed])
 
-	# 4) Release: calibration drift toward defaultSpeed (from above stall speed,
+	# 4) Release: calibration drift toward default_speed (from above stall speed,
 	#    level attitude — note: in test 3 the jet actually stalled and dove,
 	#    which is exactly what OperationZERO does; this isolates calibration).
 	AC.reset(); AC.speed = 100.0; AC.position_units = Vector3(0, 500, 0)
-	AC.accelValue = 0.0; AC.brakeValue = 0.0
+	AC.accel_value = 0.0; AC.brake_value = 0.0
 	for t in range(int(10.0 / AC.FIXED_DT)):
 		AC.step()
-	print("CALIBRATE10: speed=%.1f (drifting toward %.0f)" % [AC.speed, AC.defaultSpeed])
+	print("CALIBRATE10: speed=%.1f (drifting toward %.0f)" % [AC.speed, AC.default_speed])
 
-	# 5) Stall: force speed below stallSpeed -> nose must swing to ground
+	# 5) Stall: force speed below stall_speed -> nose must swing to ground
 	AC.reset(); AC.speed = 20.0; AC.position_units = Vector3(0, 500, 0)
 	AC.step()
-	print("STALL: isStalling=%s (expect true, speed %.1f < %.0f)" % [AC.isStalling, AC.speed, AC.stallSpeed])
+	print("STALL: is_stalling=%s (expect true, speed %.1f < %.0f)" % [AC.is_stalling, AC.speed, AC.stall_speed])
 	for t in range(int(3.0 / AC.FIXED_DT)):
 		AC.step()
 	var e = AC.unity_euler()
@@ -67,29 +67,29 @@ func _initialize() -> void:
 	# 6) Ceiling stall: fast but above stallHeight
 	AC.reset(); AC.speed = 200.0; AC.position_units = Vector3(0, 4100, 0)
 	AC.step()
-	print("CEILING: isStalling=%s (expect true)" % AC.isStalling)
+	print("CEILING: is_stalling=%s (expect true)" % AC.is_stalling)
 
 	# 7) High-G turn: accel+brake+hard pull
 	AC.reset(); AC.speed = 150.0; AC.position_units = Vector3(0, 500, 0)
-	AC.accelValue = 1.0; AC.brakeValue = 1.0; AC.pitchValue = -1.0
+	AC.accel_value = 1.0; AC.brake_value = 1.0; AC.pitch_value = -1.0
 	var f0 := 0.0
 	for t in range(int(0.5 / AC.FIXED_DT)):
 		AC.step()
 		if t == 0:
-			f0 = AC.rotateValue.x
-	print("HIGHG: turning=%s pitch_rate=%.1f deg/s (factor decays 2x->1x of %.1f)" % [AC.isHighGTurning, AC.rotateValue.x, AC.pitchAmount])
+			f0 = AC.rotate_value.x
+	print("HIGHG: turning=%s pitch_rate=%.1f deg/s (factor decays 2x->1x of %.1f)" % [AC.is_high_g_turning, AC.rotate_value.x, AC.pitch_amount])
 
 	# 8) Autopilot: from hard attitude, both yaws held
-	AC.reset(); AC.q = AC.u_euler(-30.0, 45.0, 60.0)  # 30 up, yaw 45, roll right 60
+	AC.reset(); AC.attitude = AC.u_euler(-30.0, 45.0, 60.0)  # 30 up, yaw 45, roll right 60
 	AC.speed = 150.0; AC.position_units = Vector3(0, 500, 0)
-	AC.yawLValue = 1.0; AC.yawRValue = 1.0
+	AC.yaw_l_value = 1.0; AC.yaw_r_value = 1.0
 	for t in range(int(3.0 / AC.FIXED_DT)):
 		AC.step()
 	e = AC.unity_euler()
 	print("AUTOPILOT: pitch=%.1f roll=%.1f (expect ~0/~0), yaw held=%.0f" % [e.x, e.z, e.y])
 
 	# 9) Gravity: nose down 30 deg, no throttle -> speed must rise
-	AC.reset(); AC.q = AC.u_euler(30.0, 0.0, 0.0); AC.speed = 60.0
+	AC.reset(); AC.attitude = AC.u_euler(30.0, 0.0, 0.0); AC.speed = 60.0
 	AC.position_units = Vector3(0, 500, 0)
 	for t in range(int(5.0 / AC.FIXED_DT)):
 		AC.step()
