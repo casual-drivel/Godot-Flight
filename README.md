@@ -1,11 +1,10 @@
-# Side B — OperationZERO Physics, ported 1:1 to Godot
+# OperationZERO Physics — Godot Port
 
-![Side B flight view](docs/screenshot.png)
+![Flight view](docs/screenshot.png)
 
 A faithful port of `AircraftController.cs` from
 [lunetis/OperationZERO](https://github.com/lunetis/OperationZERO) (Unity AC Zero
-remake). Every formula, constant, and quirk is preserved — this is the control
-group for the measured-AC4 model in `../godot/` (Side A).
+remake). Every formula, constant, and quirk is preserved.
 
 ## What "faithful" means here
 - Same fixed timestep (Unity `fixedDeltaTime` = 0.02 s)
@@ -29,7 +28,7 @@ group for the measured-AC4 model in `../godot/` (Side A).
     godot --headless --path . --script parity_test.gd   # parity suite
 
 ## Controls (their scheme)
-- Arrows      pitch / roll (DOWN = pull up, like Side A)
+- Arrows      pitch / roll (DOWN = pull up)
 - 3 / 1       accelerate / brake — springy throttle: target = accel - brake,
               lerps back to 0 (neutral) on release; speed calibrates toward
               defaultSpeed (60 m/s = HUD 600) when lever is centered
@@ -49,7 +48,7 @@ group for the measured-AC4 model in `../godot/` (Side A).
 - aircraft_controller.gd  — the port (physics core)
 - main.gd / main.tscn     — interactive stage (sky, ground, cones, jet, chase cam, HUD)
 - parity_test.gd          — mapping round-trip + behavior scenarios
-- obj_loader.gd, f-4e-basic.obj — shared jet mesh from Side A
+- obj_loader.gd, f-4e-basic.obj — jet mesh + runtime OBJ loader
 
 ## License
 This project is licensed under the BSD-3-Clause (see `LICENSE`).

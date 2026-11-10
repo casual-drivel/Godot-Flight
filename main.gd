@@ -1,5 +1,5 @@
 extends Node3D
-# Side B interactive scene: OperationZERO physics, Godot stage.
+# Interactive scene: OperationZERO physics, Godot stage.
 # Keys: arrows pitch/roll (DOWN=pull up), 1=brake 3=accel (both+pull = HIGH-G),
 # Q/E = rudder, Q+E held = autopilot.
 
@@ -123,7 +123,7 @@ func _physics_process(delta: float) -> void:
 		flags += "  HIGH-G"
 	if ac.isAutoPilot:
 		flags += "  AP"
-	hud.text = "SPD %4d   ALT %5d   HDG %03d\nTHR %+3.0f%%   [OperationZERO side B]%s" % [
+	hud.text = "SPD %4d   ALT %5d   HDG %03d\nTHR %+3.0f%%   [OperationZERO-Godot]%s" % [
 		ac.display_speed(), ac.display_altitude(), int(ac.display_heading()),
 		ac.throttle * 100.0, flags]
 

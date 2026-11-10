@@ -1,6 +1,6 @@
 extends SceneTree
-# Side B parity test: verifies the Unity->Godot math mapping and runs the
-# OperationZERO model through the same scenarios as Side A for A/B comparison.
+# Parity test: verifies the Unity->Godot math mapping and runs the
+# OperationZERO model through the reference scenarios.
 
 func _initialize() -> void:
 	var AC = load("res://aircraft_controller.gd").new()
