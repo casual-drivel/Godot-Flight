@@ -1,5 +1,7 @@
 # Side B — OperationZERO Physics, ported 1:1 to Godot
 
+![Side B flight view](docs/screenshot.png)
+
 A faithful port of `AircraftController.cs` from
 [lunetis/OperationZERO](https://github.com/lunetis/OperationZERO) (Unity AC Zero
 remake). Every formula, constant, and quirk is preserved — this is the control
